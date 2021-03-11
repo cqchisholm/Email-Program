@@ -1,0 +1,31 @@
+textarea {
+    min-height: 400px;
+}
+
+.element {
+    display: flex;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+.element:hover {
+    border-color: rgba(28, 60, 238, 0.548) !important;
+}
+
+#time {
+    color: grey;
+    padding-right: 5px;
+}
+
+#sender {
+    padding-left: 5px;
+}
+
+.border {
+    border-width: 1.5px !important;
+}
+
+
+.submit {
+    padding-top: 10px;
+}

@@ -92,6 +92,7 @@ function load_mailbox(mailbox) {
 
 
 function view_email(id) {
+
   // Show view-email and hide other views
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'none';
@@ -123,6 +124,11 @@ function view_email(id) {
     document.querySelector('#view-email').append(to);
     document.querySelector('#view-email').append(subject);
     document.querySelector('#view-email').append(time);
+
+    // Add reply and archive buttons
+    var reply_archive = document.createElement('div');
+    reply_archive.innerHTML = '<button type="button" class="btn btn-primary btn-sm" id="reply">Reply</button> <button type="button" class="btn btn-success btn-sm" id="archive">Archive</button>';
+    document.querySelector('#view-email').append(reply_archive);
 
     // Add line break
     document.querySelector('#view-email').append(line);

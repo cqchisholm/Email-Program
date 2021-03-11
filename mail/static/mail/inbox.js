@@ -135,6 +135,31 @@ function view_email(id) {
 
     // Add email body
     document.querySelector('#view-email').append(body);
+
+    // If user clicks on Archive button
+    document.getElementById('reply').addEventListener('click', () => {
+      reply_email(email.sender, email.subject, email.body, email.timestamp);
+    })
   })
   
+}
+
+
+function reply_email(sender, subject, body, time) {
+  
+  // Show compose view and hide other views
+  document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#compose-view').style.display = 'block';
+  document.querySelector('#view-email').style.display = 'none';
+
+  // Clear out composition fields
+  document.querySelector('#compose-recipients').value = sender;
+  document.querySelector('#compose-subject').value = `Re: ${subject}`;
+  document.querySelector('#compose-body').value = `
+  
+On ${time} ${sender} wrote: ${body}`;
+  // Set the autofocus to be on the body input, and the cursor to start at the beginning
+  document.querySelector('#compose-body').focus();
+  document.querySelector('#compose-body').setSelectionRange(0, 0);
+
 }

@@ -118,7 +118,7 @@ function view_email(id) {
     to.innerHTML = `<b>To: </b>${email.recipients}`;
     subject.innerHTML = `<b>Subject: </b>${email.subject}`;
     time.innerHTML = `<b>Timestamp: </b>${email.timestamp}`;
-    body.innerHTML = email.body;
+    body.innerHTML = '<pre>' + email.body + '</pre>';
 
     document.querySelector('#view-email').append(from);
     document.querySelector('#view-email').append(to);
@@ -127,7 +127,13 @@ function view_email(id) {
 
     // Add reply and archive buttons
     var reply_archive = document.createElement('div');
-    reply_archive.innerHTML = '<button type="button" class="btn btn-primary btn-sm" id="reply">Reply</button> <button type="button" class="btn btn-success btn-sm" id="archive">Archive</button>';
+    if (email.archived === false) {
+      var archive_button = 'Archive';
+    }
+    else {
+      var archive_button = 'Unarchive';
+    }
+    reply_archive.innerHTML = `<button type="button" class="btn btn-primary btn-sm" id="reply">Reply</button> <button type="button" class="btn btn-success btn-sm" id="archive">${archive_button}</button>`;
     document.querySelector('#view-email').append(reply_archive);
 
     // Add line break
@@ -136,9 +142,14 @@ function view_email(id) {
     // Add email body
     document.querySelector('#view-email').append(body);
 
-    // If user clicks on Archive button
+    // If user clicks on reply button
     document.getElementById('reply').addEventListener('click', () => {
       reply_email(email.sender, email.subject, email.body, email.timestamp);
+    })
+
+    // If user click on archive button
+    document.getElementById('archive').addEventListener('click', () => {
+      archive_email(email.id, email.archived);
     })
   })
   
@@ -152,14 +163,48 @@ function reply_email(sender, subject, body, time) {
   document.querySelector('#compose-view').style.display = 'block';
   document.querySelector('#view-email').style.display = 'none';
 
-  // Clear out composition fields
+  // Prefill the fields with the correct data
   document.querySelector('#compose-recipients').value = sender;
-  document.querySelector('#compose-subject').value = `Re: ${subject}`;
-  document.querySelector('#compose-body').value = `
+  // Add "Re: " to subject unless it already has it
+  if (subject.match(/Re: .*/)) {
+    document.querySelector('#compose-subject').value = subject;
+  }
+  else {
+    document.querySelector('#compose-subject').value = `Re: ${subject}`;
+  }
+  document.querySelector('#compose-body').value = (
+`
   
-On ${time} ${sender} wrote: ${body}`;
+On ${time} ${sender} wrote:
+${body}`
+  );
   // Set the autofocus to be on the body input, and the cursor to start at the beginning
   document.querySelector('#compose-body').focus();
   document.querySelector('#compose-body').setSelectionRange(0, 0);
+
+}
+
+
+function archive_email(id, archived) {
+
+  fetch(`/emails/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+      archived: !archived
+    })
+  })
+  // Update Archive/Unarchive button
+  .then(() => {
+    if (archived === false) {
+      document.querySelector('#archive').innerHTML = 'Unarchive';
+    }
+    else {
+      document.querySelector('#archive').innerHTML = 'Archive';
+    } 
+  })
+  // Load the inbox
+  .then(() => {
+    load_mailbox('inbox');
+  })
 
 }

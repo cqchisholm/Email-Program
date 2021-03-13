@@ -81,8 +81,18 @@ function load_mailbox(mailbox) {
       element.innerHTML += `<div id="time">${email.timestamp}</div>`;
       // Append the element to the emails-view
       document.querySelector('#emails-view').append(element);
+      // Check if email has been read already
+      if (email.read === true) {
+        element.style.backgroundColor = 'lightgrey';
+      }
       // Add eventListener
       element.addEventListener('click', () => {
+        fetch(`/emails/${email.id}`, {
+          method: 'PUT',
+          body: JSON.stringify({
+            read: true
+          })
+        })
         view_email(email.id);
       })
     })
